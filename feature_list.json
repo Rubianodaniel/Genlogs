@@ -1,0 +1,23 @@
+{
+  "project": "Genlogs portal simulation",
+  "features": [
+    {
+      "id": 1,
+      "title": "Backend FastAPI carriers endpoint",
+      "spec": "specs/001-carriers-api.md",
+      "status": "pending"
+    },
+    {
+      "id": 2,
+      "title": "React single-page portal with Google Maps",
+      "spec": "specs/002-portal-ui.md",
+      "status": "pending"
+    },
+    {
+      "id": 3,
+      "title": "Deploy backend + frontend to a cloud provider",
+      "spec": "specs/README.md",
+      "status": "pending"
+    }
+  ]
+}
