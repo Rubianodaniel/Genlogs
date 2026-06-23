@@ -5,9 +5,25 @@
 
 ## Active feature
 
-- **id:** 4 — Backend input/output validation (Pydantic) + security hardening
+- **id:** 2 — React single-page portal with Google Maps
 - **status:** in_progress (implementer)
 - **start time:** 2026-06-23
+
+### Implementer plan (feature 2)
+
+- Scaffold `frontend/` (Vite + React + TS + Tailwind + Vitest) under FSD layers.
+- shared/config: env access (VITE_API_BASE_URL, VITE_GOOGLE_MAPS_API_KEY).
+- shared/api: fetch wrapper (http client, base URL from env).
+- entities/carrier: Carrier type + presentational CarrierItem.
+- features/search-corridor: api (carriersApi POST /carriers), model (useSearchCorridor
+  hook = business logic + state machine idle→loading→loaded/error), ui (CityInput
+  with Places autocomplete + SearchPanel).
+- widgets/route-map (Google Map + DirectionsService alternatives, up to 3 routes),
+  widgets/carrier-list (presentational list).
+- app/App.tsx (APIProvider), pages/portal (composition).
+- Tests (Vitest + RTL, mocks only): carriersApi (mock fetch), useSearchCorridor
+  (mock api), CarrierListWidget (presentational). No real network / Maps in tests.
+- Extend init.sh to run frontend build+test guarded by `command -v npm` && frontend dir.
 
 ### Implementer plan (feature 4)
 
@@ -50,4 +66,5 @@
 
 ## Blockers
 
--
+- None. Feature 2 implemented; Node present so build + tests ran green.
+  Full report in progress/impl_2.md. Awaiting reviewer.

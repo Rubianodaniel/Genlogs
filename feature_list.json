@@ -17,7 +17,7 @@
       "id": 2,
       "title": "React single-page portal with Google Maps",
       "spec": "specs/002-portal-ui.md",
-      "status": "pending"
+      "status": "done"
     },
     {
       "id": 3,

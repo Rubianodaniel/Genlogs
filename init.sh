@@ -31,4 +31,21 @@ else
   echo "No backend/src yet — skipping tests (scaffolding phase)."
 fi
 
+# --- Frontend checks (only if Node/npm is available) ---
+# Non-fatal when Node is absent so the harness gate stays green in a Node-less
+# environment; backend pytest above is the hard gate.
+if command -v npm >/dev/null 2>&1 && [ -d "frontend" ]; then
+  echo "==> Frontend: npm build + test"
+  (
+    cd frontend
+    if [ ! -d node_modules ]; then
+      npm install
+    fi
+    npm run build
+    npm test
+  )
+else
+  echo "npm not found or no frontend/ — skipping frontend checks."
+fi
+
 echo "==> init OK"

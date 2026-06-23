@@ -1,5 +1,10 @@
 __pycache__/
 *.pyc
 node_modules/
+dist/
 .env
 .DS_Store
+
+# Build artifacts
+*.tsbuildinfo
+frontend/dist/
