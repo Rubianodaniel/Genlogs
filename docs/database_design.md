@@ -142,14 +142,98 @@ In the **point-4 simulation** this exact result is hardcoded (no DB), but it map
 1:1 to `carrier_corridor_volume`, so the simulation can later be swapped for a
 real query with no API contract change.
 
-## 3.4 Relationships (summary)
+## 3.4 Entity–Relationship diagram
 
+The full schema as an ER diagram (GitHub renders Mermaid natively). Write/ingest
+side and reference data are normalized; `carrier_corridor_volume` is the
+denormalized **read model** that powers the portal.
+
+```mermaid
+erDiagram
+    cameras   ||--o{ images   : "captures"
+    images    ||--o{ detections : "yields"
+    images    ||--o{ sightings : "confirmed as"
+    cameras   ||--o{ sightings : "located at"
+    carriers  ||--o{ vehicles  : "owns"
+    carriers  ||--o{ sightings : "identified in"
+    vehicles  |o--o{ sightings : "seen as"
+    carriers  ||--o{ carrier_corridor_volume : "aggregated into"
+    carriers  ||--o| safer_cache : "cached by usdot"
+
+    cameras {
+        bigserial id PK
+        text      external_ref UK
+        text      highway
+        geography location "POINT 4326"
+        text      status
+    }
+    images {
+        bigserial id PK
+        bigint    camera_id FK
+        timestamptz captured_at
+        text      storage_uri "s3://..."
+        text      processing_status
+    }
+    detections {
+        bigserial id PK
+        bigint    image_id FK
+        text      kind "plate | truck_id | logo"
+        text      raw_value "OCR / label"
+        real      confidence
+        jsonb     bbox
+    }
+    carriers {
+        bigserial id PK
+        bigint    usdot_number UK
+        text      legal_name
+        text      dba_name
+        timestamptz safer_synced_at
+    }
+    vehicles {
+        bigserial id PK
+        bigint    carrier_id FK
+        text      vin
+        text      plate "UK with plate_state"
+        text      plate_state
+    }
+    safer_cache {
+        bigint    usdot_number PK
+        jsonb     payload "raw SAFER FMCSA"
+        timestamptz fetched_at
+    }
+    sightings {
+        bigserial id PK
+        bigint    image_id FK
+        bigint    camera_id FK
+        bigint    carrier_id FK
+        bigint    vehicle_id FK
+        bigint    usdot_number "immutable snapshot"
+        timestamptz seen_at
+        geography location "POINT 4326"
+    }
+    carrier_corridor_volume {
+        bigserial id PK
+        text      origin_city
+        text      destination_city
+        bigint    carrier_id FK
+        numeric   trucks_per_day
+        date      window_start
+        date      window_end
+    }
 ```
-cameras 1───* images 1───* detections
-images  1───* sightings *───1 carriers 1───* vehicles
-carriers 1───* carrier_corridor_volume   (read model)
-carriers 1───1 safer_cache (by usdot_number)
-```
+
+Relationship cardinalities at a glance:
+
+- `cameras 1──* images 1──* detections` — a camera captures many images; each
+  image yields many raw detections.
+- `images 1──* sightings *──1 carriers 1──* vehicles` — confirmed sightings link
+  an image to a carrier (and optionally the specific vehicle).
+- `carriers 1──* carrier_corridor_volume` — the pre-aggregated read model.
+- `carriers 1──0..1 safer_cache` — raw SAFER payload cached by `usdot_number`.
+
+> Crow's-foot reading: `||` = exactly one, `o{` = zero-or-many, `o|` =
+> zero-or-one. So `vehicles |o--o{ sightings` = a sighting may or may not be
+> resolved to a vehicle, and a vehicle can appear in many sightings.
 
 ## 3.5 Normalization (normal forms) — how to read this model
 
