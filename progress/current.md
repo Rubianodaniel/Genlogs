@@ -5,9 +5,23 @@
 
 ## Active feature
 
-- **id:** 1 — Backend FastAPI carriers endpoint
-- **status:** in_progress (implementer: Clean Architecture refactor)
-- **start time:** 2026-06-23 — clean-arch + TDD refactor of feature 1
+- **id:** 4 — Backend input/output validation (Pydantic) + security hardening
+- **status:** in_progress (implementer)
+- **start time:** 2026-06-23
+
+### Implementer plan (feature 4)
+
+- Add reusable `CityField` Annotated type in `interface/schemas.py` (DRY): trim,
+  min 1 / max 100, allowed-char pattern (unicode letters, space, `. , ' -`).
+  Reuse for `CarriersRequest` (POST) and GET query params; `extra="forbid"`.
+- Output DTOs: `trucks_per_day: int = Field(ge=0)`, `CarriersResponse`
+  `extra="forbid"`.
+- New `interface/settings.py`: `Settings` Singleton via `lru_cache`, reads
+  `CORS_ORIGINS` env (default localhost:5173,3000) using `os.getenv` (no new dep).
+- `main.py create_app()`: CORS from settings (no `*`), methods GET/POST/OPTIONS,
+  drop credentials+`*`; security-headers middleware; generic 500 handler.
+- TDD unit tests in `tests/test_validation_security.py` covering spec 003 §3.5.
+- No domain/application changes; spec-001 behavior unchanged.
 
 ## Implementer plan (clean-arch refactor)
 

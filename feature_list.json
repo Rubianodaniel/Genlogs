@@ -8,6 +8,12 @@
       "status": "done"
     },
     {
+      "id": 4,
+      "title": "Backend input/output validation (Pydantic) + security hardening",
+      "spec": "specs/003-backend-validation-security.md",
+      "status": "done"
+    },
+    {
       "id": 2,
       "title": "React single-page portal with Google Maps",
       "spec": "specs/002-portal-ui.md",

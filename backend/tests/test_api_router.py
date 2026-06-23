@@ -69,14 +69,14 @@ def test_get_carriers_uses_query_params(
     """GET routes query params to the use case."""
 
     resp = client.get(
-        "/carriers", params={"from_city": "Q1", "to_city": "Q2"}
+        "/carriers", params={"from_city": "Query One", "to_city": "Query Two"}
     )
 
     assert resp.status_code == 200
     assert resp.json()["carriers"] == [
         {"name": "Fake Carrier", "trucks_per_day": 42}
     ]
-    assert fake_use_case.calls == [("Q1", "Q2")]
+    assert fake_use_case.calls == [("Query One", "Query Two")]
 
 
 def test_post_carriers_missing_field_returns_422(client: TestClient) -> None:

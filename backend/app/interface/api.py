@@ -7,11 +7,20 @@ which is the seam unit tests override.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Query
 
 from app.application.get_carriers import GetCarriersUseCase
 from app.interface.deps import get_carriers_use_case
-from app.interface.schemas import CarriersRequest, CarriersResponse
+from app.interface.schemas import CarriersRequest, CarriersResponse, CityField
+
+# Query-param variant of the shared city constraints (DRY): the same validation
+# as the POST body, expressed through ``Query`` so the GET endpoint has no
+# unvalidated path into the use case.
+CityQuery = Annotated[
+    CityField, Query(description="City name (validated)")
+]
 
 router = APIRouter()
 
@@ -36,8 +45,8 @@ def carriers_post(
 
 @router.get("/carriers", response_model=CarriersResponse)
 def carriers_get(
-    from_city: str,
-    to_city: str,
+    from_city: CityQuery,
+    to_city: CityQuery,
     use_case: GetCarriersUseCase = Depends(get_carriers_use_case),
 ) -> CarriersResponse:
     """Return carriers for the origin/destination pair (query params)."""
