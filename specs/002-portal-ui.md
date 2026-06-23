@@ -1,5 +1,15 @@
 # Spec 002 — Portal UI (React single-page client)
 
+## Stack (decided)
+
+- **React + TypeScript**, built with **Vite**.
+- **Tailwind CSS** for styling.
+- **@vis.gl/react-google-maps** (official Google library) for the embedded map,
+  Places autocomplete, and Directions with alternative routes.
+- **Feature-Sliced Design** structure per `docs/conventions.md` §3
+  (`app → pages → widgets → features → entities → shared`, unidirectional imports).
+- Backend base URL and Google Maps API key via Vite env vars (`VITE_*`).
+
 ## Goal
 
 A single-page React client that captures origin/destination cities, shows the 3
