@@ -189,6 +189,13 @@ The Aggregation service pre-computes it into `carrier_corridor_volume` (a
 controlled, refreshable duplication). This is the classic **normalized writes /
 denormalized reads** trade-off (CQRS).
 
+> **How that aggregation runs (and why it's not a DB trigger)** is documented in
+> `docs/platform_architecture.md` §2.5: it is a **separate scheduled job/service**,
+> kept off the write critical path because of the high sightings write volume — a
+> trigger would couple ingestion to aggregation and break the CQRS split. For this
+> assessment the service is **designed but not deployed**; the in-memory repository
+> materializes its output instead.
+
 > In the **point-4 simulation** there is no DB at all: the in-memory repository
 > returns exactly what a `SELECT ... FROM carrier_corridor_volume` would, so the
 > data shape the API exposes already matches this model 1:1.

@@ -80,3 +80,47 @@ The natural fit is an **event-driven pipeline** for ingest/processing plus a
   stays fast.
 - **Stateless services**: every service is horizontally scalable behind the gateway;
   state lives in storage, the bus, and the databases.
+
+## 2.5 The Aggregation/Corridor Service (component 8) — implementation decision
+
+The aggregation step (sightings → `carrier_corridor_volume`) is designed as a
+**separate deployable job/service**, **not** a database trigger. This is a
+deliberate choice driven by the write-volume risk.
+
+### Options considered
+
+| Option | What it is | Trade-off |
+|--------|-----------|-----------|
+| **A — Scheduled batch job** *(chosen)* | A process (cron/Airflow/scheduled container or function) that periodically re-aggregates `sightings` into the read model with an `INSERT ... ON CONFLICT DO UPDATE`. | Simplest; "trucks/day" doesn't need real-time freshness, so hourly/nightly is plenty. |
+| **B — Streaming consumer** | A worker subscribed to the message bus that updates corridor counters incrementally per new sighting. | Near-real-time, but always-on and more operationally complex. Only if seconds-level freshness is required. |
+| **C — Materialized view** | A Postgres `MATERIALIZED VIEW` with a scheduled `REFRESH`. | Least infra (logic lives in the DB), but less flexible to evolve than a dedicated service. |
+
+### Why NOT a database trigger
+
+A trigger (`AFTER INSERT ON sightings`) was explicitly rejected because of the
+**high-write-volume risk**:
+
+1. **Couples the write critical path** — with millions of sightings ingested, a
+   trigger fires on every INSERT and would make ingestion wait on aggregation,
+   throttling the pipeline.
+2. **Breaks the CQRS separation** — the whole point is to decouple writes from
+   reads; a trigger re-couples them inside the same transaction.
+3. **Operability** — business logic buried in SQL triggers is hard to test,
+   version and scale horizontally; a stateless Python service is not.
+
+So aggregation runs **off** the write critical path: it reads `sightings` on its
+own schedule and writes `carrier_corridor_volume`, keeping ingestion fast and the
+read side independently scalable.
+
+### Scope for this assessment (point 4)
+
+**This service is designed but not deployed.** The point-4 simulation needs no DB
+and no aggregation infrastructure: the in-memory repository
+(`backend/app/infrastructure/in_memory_carrier_repo.py`) plays the role of
+components **8 + 9 collapsed**, returning exactly what a
+`SELECT ... FROM carrier_corridor_volume` would. The data shape it exposes matches
+the read model 1:1, so it can later be swapped for the real query with **no API
+contract change**. In other words, the aggregation service was **reasoned through
+against the write-volume risk above**, but only its output (the pre-computed
+result) is materialized for the test — the service itself is left as platform
+design, not deployed code.
