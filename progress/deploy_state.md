@@ -16,14 +16,19 @@
   **`dczrea1xzgt8g.cloudfront.net`** (SPA error responses 403/404 → /index.html 200).
   Status InProgress at creation (~15 min to deploy).
 
-## Blocked / pending
+## LIVE (deploy complete 2026-06-23)
 
-- **App Runner service** (`genlogs-backend`): blocked by
-  `SubscriptionRequiredException` — the AWS account is brand-new and still
-  activating (paid services not enabled yet). A background retry loop
-  (`scratchpad/retry-apprunner.sh`, every 20 min) keeps attempting
-  `create-service` with `CORS_ORIGINS=https://dczrea1xzgt8g.cloudfront.net`.
-  Result will land in `scratchpad/apprunner-result.json`.
+- **Root cause of the earlier block:** the AWS account was on the new **Free
+  account plan**, which disallows App Runner (`SubscriptionRequiredException`).
+  Resolved by **Upgrade plan** → paid (pay-as-you-go; ~$100 credits cover it).
+- **Backend (App Runner):** service `genlogs-backend`
+  (`arn:aws:apprunner:us-east-1:185818464819:service/genlogs-backend/d370f3fcc08b45bda31b23a2994caebf`)
+  → **https://cah82yetag.us-east-1.awsapprunner.com**, status RUNNING,
+  `CORS_ORIGINS=https://dczrea1xzgt8g.cloudfront.net`.
+- **Frontend:** built with `VITE_API_BASE_URL=https://cah82yetag.us-east-1.awsapprunner.com`,
+  synced to S3, CloudFront invalidated → **https://dczrea1xzgt8g.cloudfront.net**.
+- **Verified:** `/health` ok; `/carriers` NYC→DC returns spec carriers with the
+  correct `Access-Control-Allow-Origin`; CloudFront serves the SPA (HTTP 200).
 
 ## Remaining steps (after backend is up)
 

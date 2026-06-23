@@ -61,8 +61,13 @@ The frontend build needs the backend's live URL, so deploy the backend first.
 
 > Paste the two final URLs here once the deploy is done.
 
-- **Backend (App Runner):** `https://__REPLACE_ME__.awsapprunner.com`
-- **Frontend (CloudFront):** `https://__REPLACE_ME__.cloudfront.net`
+- **Backend (App Runner):** https://cah82yetag.us-east-1.awsapprunner.com
+- **Frontend (CloudFront):** https://dczrea1xzgt8g.cloudfront.net
+
+> Verified live: backend `/health` → `{"status":"ok"}`; `/carriers` returns the
+> spec carriers with `Access-Control-Allow-Origin` set to the CloudFront origin;
+> the CloudFront URL serves the SPA (HTTP 200). Account is on the paid plan
+> (Free plan blocked App Runner); ~$100 in credits cover the cost.
 
 ## Verifying
 

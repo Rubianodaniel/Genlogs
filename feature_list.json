@@ -23,7 +23,7 @@
       "id": 3,
       "title": "Deploy backend + frontend to a cloud provider",
       "spec": "specs/004-deploy.md",
-      "status": "in_progress"
+      "status": "done"
     }
   ]
 }

@@ -5,21 +5,9 @@
 
 ## Active feature
 
-- **id:** 3 — Deploy backend + frontend to a cloud provider
-- **status:** in_progress (implementer)
-- **start time:** 2026-06-22
-- **spec:** specs/004-deploy.md
-
-### Deploy decision (feature 3)
-
-- Target: backend FastAPI → Docker image → **AWS App Runner**; frontend Vite
-  build → **S3 + CloudFront** (static, no container). Chosen for lowest
-  cost/effort; ECS/EC2 rejected as over-infra for an assessment.
-- Artifacts to produce: `backend/Dockerfile` + `backend/.dockerignore`,
-  `deploy/` docs/scripts (App Runner notes, frontend S3/CloudFront deploy),
-  `deploy/README.md` tying it together.
-- Out of scope: running the real AWS apply (needs owner's AWS creds) — artifacts
-  must be correct/runnable; live URLs pasted later by the owner.
+- **None.** All features (1, 2, 3, 4) are `done`. No active session.
+- Feature 3 (deploy) was independently verified live and closed 2026-06-23;
+  details moved to `progress/history.md`.
 
 ### Implementer plan (feature 2)
 
