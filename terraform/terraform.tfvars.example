@@ -1,0 +1,13 @@
+# Copy to terraform.tfvars and adjust. terraform.tfvars is gitignored.
+
+aws_region           = "us-east-1"
+project_name         = "genlogs"
+backend_image_tag    = "latest"
+
+# Build the backend image from ../backend and push to ECR during `apply`.
+# Requires Docker + AWS CLI locally. Set false if the image is already in ECR.
+build_and_push_image = true
+
+# Set your Google Maps key to also build + upload the frontend during `apply`.
+# Leave empty ("") to provision infra only and run deploy/frontend-deploy.sh later.
+google_maps_api_key  = ""

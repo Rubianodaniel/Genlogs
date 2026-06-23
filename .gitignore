@@ -13,3 +13,10 @@ backend/venv/
 # Build artifacts
 *.tsbuildinfo
 frontend/dist/
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+crash.log
