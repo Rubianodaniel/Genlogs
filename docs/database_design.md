@@ -144,9 +144,15 @@ real query with no API contract change.
 
 ## 3.4 Entity–Relationship diagram
 
-The full schema as an ER diagram (GitHub renders Mermaid natively). Write/ingest
-side and reference data are normalized; `carrier_corridor_volume` is the
-denormalized **read model** that powers the portal.
+The full schema, drawn as an ER diagram. Tables are colour-coded by layer
+(ingest/vision · carrier reference · the `sightings` fact · the denormalized
+read model), with PK/FK/UK badges and crow's-foot cardinalities.
+
+![Genlogs database ER diagram](diagrams/database_erd.png)
+
+> Rendered PNG above (regenerate with `docs/diagrams/gen_erd.py`). The same model
+> is also available as a Mermaid source below — GitHub renders it natively, so it
+> stays diff-able in code review.
 
 ```mermaid
 erDiagram
