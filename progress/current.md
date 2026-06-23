@@ -5,9 +5,21 @@
 
 ## Active feature
 
-- **id:** 2 — React single-page portal with Google Maps
+- **id:** 3 — Deploy backend + frontend to a cloud provider
 - **status:** in_progress (implementer)
-- **start time:** 2026-06-23
+- **start time:** 2026-06-22
+- **spec:** specs/004-deploy.md
+
+### Deploy decision (feature 3)
+
+- Target: backend FastAPI → Docker image → **AWS App Runner**; frontend Vite
+  build → **S3 + CloudFront** (static, no container). Chosen for lowest
+  cost/effort; ECS/EC2 rejected as over-infra for an assessment.
+- Artifacts to produce: `backend/Dockerfile` + `backend/.dockerignore`,
+  `deploy/` docs/scripts (App Runner notes, frontend S3/CloudFront deploy),
+  `deploy/README.md` tying it together.
+- Out of scope: running the real AWS apply (needs owner's AWS creds) — artifacts
+  must be correct/runnable; live URLs pasted later by the owner.
 
 ### Implementer plan (feature 2)
 
@@ -63,6 +75,20 @@
   SOLID/Factory/Singleton/Repository, FSD frontend). Flow diagrams in specs/.
 - Frontend stack decided: React+TypeScript, Vite, Tailwind, @vis.gl/react-google-maps.
 - Decision: refactor backend (flat) → Clean Architecture + TDD BEFORE frontend.
+
+### Implementer plan (feature 3 — deploy) — STARTED 2026-06-22
+
+- Artifacts (infra/docs only, no app code changes — CORS already env-driven):
+  - `backend/Dockerfile`: python:3.12-slim, requirements copied first (layer
+    cache), non-root user, `uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}`.
+  - `backend/.dockerignore`: venv/, __pycache__/, .pytest_cache/, tests caches.
+  - `deploy/README.md` (G1–G2): prereqs, order of ops, where to paste live URLs,
+    Google Maps key restriction callout for CloudFront domain.
+  - `deploy/backend-apprunner.md` + `apprunner.yaml`: port, health `/health`,
+    `CORS_ORIGINS` env (must include CloudFront origin).
+  - `deploy/frontend-deploy.sh` + `deploy/frontend-s3-cloudfront.md` (F3/F4 SPA
+    routing: CloudFront 403/404 -> /index.html 200).
+- Docker IS available -> will run `docker build` + curl /health to satisfy D6.
 
 ## Blockers
 

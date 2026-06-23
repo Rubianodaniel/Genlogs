@@ -22,8 +22,8 @@
     {
       "id": 3,
       "title": "Deploy backend + frontend to a cloud provider",
-      "spec": "specs/README.md",
-      "status": "pending"
+      "spec": "specs/004-deploy.md",
+      "status": "in_progress"
     }
   ]
 }

@@ -1,0 +1,29 @@
+# Keep the build context small and reproducible (D5).
+# Virtual envs / local interpreter state
+venv/
+.venv/
+env/
+
+# Python caches and compiled files
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+
+# Test / tooling caches — tests are not needed in the runtime image
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+tests/
+
+# Local config / secrets / docs that should never enter the image
+.env
+.env.*
+*.md
+.git/
+.gitignore
+.dockerignore
+Dockerfile

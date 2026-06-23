@@ -15,3 +15,5 @@ No feature is implemented without a spec in this folder.
 |------------------------|-------------------------------------------|
 | `001-carriers-api.md`  | Backend FastAPI endpoint + carrier rules  |
 | `002-portal-ui.md`     | React single-page portal + Google Maps    |
+| `003-backend-validation-security.md` | Backend input/output validation + security hardening |
+| `004-deploy.md`        | Deploy backend (App Runner) + frontend (S3/CloudFront) |

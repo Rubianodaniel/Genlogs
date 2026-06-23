@@ -5,6 +5,11 @@ dist/
 .env
 .DS_Store
 
+# Python virtualenvs
+venv/
+.venv/
+backend/venv/
+
 # Build artifacts
 *.tsbuildinfo
 frontend/dist/

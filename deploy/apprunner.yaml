@@ -1,0 +1,28 @@
+# AWS App Runner configuration for the Genlogs backend.
+# Reference: specs/004-deploy.md §4.2. This file documents the service shape.
+#
+# NOTE on usage: `apprunner.yaml` is consumed by App Runner only for the
+# *source-code* (managed build) deployment type, and it is read from the ROOT of
+# the connected repository. Our chosen path is an *image-based* service (we build
+# the Dockerfile and push to ECR, then point App Runner at the image), so the
+# runtime values below (port, health check, env) are configured in the App Runner
+# console / `create-service` call — see deploy/backend-apprunner.md for the exact
+# CLI. This file is kept as living documentation of those settings; copy it to the
+# repo root if you switch to App Runner's managed source-code build.
+version: 1.0
+runtime: python311  # placeholder; the image-based path uses backend/Dockerfile instead.
+build:
+  commands:
+    build:
+      - pip install -r requirements.txt
+run:
+  command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+  network:
+    port: 8000
+  env:
+    # Must include the CloudFront origin once the frontend is live (D7).
+    # Example: https://d1234abcd.cloudfront.net
+    - name: CORS_ORIGINS
+      value: "https://REPLACE_WITH_CLOUDFRONT_DOMAIN"
+# Health check (configured at the service level, not in this file for image
+# services): protocol HTTP, path /health, expected 200 {"status":"ok"}.
